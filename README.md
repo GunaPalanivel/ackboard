@@ -6,6 +6,8 @@ Live demo: [ackboard.vercel.app](https://ackboard.vercel.app)
 
 Open the URL in ChatGPT Atlas, or in Chrome with `chrome://flags/#enable-webmcp-testing` enabled. There is no login. The fleet is simulated; the header says so.
 
+![Ackboard dashboard](docs/screenshots/desktop.png)
+
 ```bash
 npm install
 npm run check
