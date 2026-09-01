@@ -167,7 +167,7 @@ export function setConfirmHandler(handler: ((req: ConfirmRequest) => Promise<boo
   confirmHandler = handler;
 }
 
-async function requestConfirmation(req: ConfirmRequest): Promise<boolean> {
+export async function requestConfirmation(req: ConfirmRequest): Promise<boolean> {
   if (!confirmHandler) {
     console.warn('[Ackboard] No confirmation handler set. Auto-rejecting write operation.');
     return false;

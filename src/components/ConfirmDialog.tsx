@@ -68,13 +68,13 @@ export default function ConfirmDialog() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="ackboard-confirm-title">
       <div className="bg-slate-900 border border-slate-700 rounded-lg shadow-2xl max-w-md w-full p-6 flex flex-col gap-4 animate-zoom-in">
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-full border ${getAccentColor(req.variant)}`}>
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <h2 className="text-xl font-semibold text-slate-50">{req.title}</h2>
+          <h2 id="ackboard-confirm-title" className="text-xl font-semibold text-slate-50">{req.title}</h2>
         </div>
         
         <div className="text-slate-200 text-lg">
@@ -103,7 +103,7 @@ export default function ConfirmDialog() {
         </div>
         
         <div className="text-xs text-slate-500 text-center mt-2">
-          WebMCP write operations require your approval
+          Enter to approve, Escape to decline
         </div>
       </div>
       <style>{`

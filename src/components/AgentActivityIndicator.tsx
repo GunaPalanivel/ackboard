@@ -39,7 +39,7 @@ export default function AgentActivityIndicator({ panelId, children, className = 
     <div className={`relative h-full ${className}`}>
       {isActive && (
         <div className="absolute -top-3 right-4 z-10 flex items-center gap-1.5 bg-blue-500 text-white text-xs px-2.5 py-1 rounded-full shadow-lg shadow-blue-500/20 animate-indicator-badge">
-          <span>🤖</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
           <span className="font-medium">Agent examining</span>
         </div>
       )}

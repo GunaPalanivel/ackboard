@@ -14,6 +14,7 @@ import {
   initializeWebMCP,
   getWebMCPStatus,
   onWebMCPStatusChange,
+  requestConfirmation,
   type WebMCPStatus,
   type StoreAccessors,
 } from './webmcp/register-tools';
@@ -124,6 +125,9 @@ function App() {
         <div className="text-center">
           <div className="text-2xl font-bold text-slate-50 mb-2">Ackboard</div>
           <div className="text-sm">Loading simulated fleet data...</div>
+          <div className="mt-4 mx-auto h-1 w-32 overflow-hidden rounded bg-slate-800">
+            <div className="h-full w-1/2 bg-blue-500 animate-pulse" />
+          </div>
         </div>
       </div>
     );
@@ -164,8 +168,8 @@ function App() {
         </div>
       </header>
 
-      <main className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-slate-800 m-px" style={{ minHeight: 'calc(100vh - 49px)' }}>
-        <AgentActivityIndicator panelId="services" className="bg-slate-950 p-4">
+      <main className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-slate-800 m-px min-h-[calc(100vh-3.5rem)]">
+        <AgentActivityIndicator panelId="services" className="bg-slate-950 p-4 min-h-[16rem]">
           <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Service Health</h2>
           {services.length === 0 ? (
             <p className="text-sm text-slate-500">No services in this session.</p>
@@ -198,7 +202,7 @@ function App() {
           )}
         </AgentActivityIndicator>
 
-        <AgentActivityIndicator panelId="incidents" className="bg-slate-950 p-4">
+        <AgentActivityIndicator panelId="incidents" className="bg-slate-950 p-4 min-h-[16rem]">
           <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Active Incidents</h2>
           {incidents.length === 0 ? (
             <p className="text-sm text-slate-500">No incidents. An agent can open one with create_incident after you approve it.</p>
@@ -237,20 +241,31 @@ function App() {
           )}
         </AgentActivityIndicator>
 
-        <AgentActivityIndicator panelId="logs" className="bg-slate-950">
+        <AgentActivityIndicator panelId="logs" className="bg-slate-950 min-h-[22rem]">
           <LogViewer />
         </AgentActivityIndicator>
 
-        <AgentActivityIndicator panelId="metrics" className="bg-slate-950">
+        <AgentActivityIndicator panelId="metrics" className="bg-slate-950 min-h-[22rem]">
           <MetricsPanel />
         </AgentActivityIndicator>
 
-        <AgentActivityIndicator panelId="deployments" className="bg-slate-950">
+        <AgentActivityIndicator panelId="deployments" className="bg-slate-950 min-h-[22rem]">
           <DeploymentTimeline />
         </AgentActivityIndicator>
 
-        <AgentActivityIndicator panelId="runbook" className="bg-slate-950">
-          <RunbookPanel />
+        <AgentActivityIndicator panelId="runbook" className="bg-slate-950 min-h-[22rem]">
+          <RunbookPanel
+            onExecuteStep={async (runbookId, stepIndex) => {
+              const ok = await requestConfirmation({
+                title: `Execute runbook step ${stepIndex + 1}?`,
+                message: `Runbook: ${runbookId}, step ${stepIndex + 1}`,
+                details: 'This runs a remediation action. Review it before you approve.',
+                variant: 'destructive',
+              });
+              if (!ok) return;
+              await useRunbookStore.getState().executeStep(runbookId, stepIndex);
+            }}
+          />
         </AgentActivityIndicator>
       </main>
     </div>
