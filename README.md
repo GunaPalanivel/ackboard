@@ -51,9 +51,7 @@ WebKit filed `position: oppose` on 2026-06-03 (WebKit/standards-positions#670). 
 
 ## Limits
 
-The data is simulated. Atlas was not self-tested here (Windows machine, Atlas is macOS). `npm run check` covers the store logic behind every read tool. The Chrome WebMCP flag path still needs a human with the Inspector when recording. `requestUserInteraction()` is still an open discussion, so writes use an in-page modal.
-
-Code was drafted with Cursor. Types come from `@mcp-b/webmcp-types`.
+The fleet is simulated. This repo was verified with `npm run check` and a no-WebMCP browser fallback. ChatGPT Atlas was not run here (dev machine is Windows). `requestUserInteraction()` is still an open discussion, so writes use an in-page modal.
 
 ## License
 
