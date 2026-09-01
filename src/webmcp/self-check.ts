@@ -1,4 +1,5 @@
 import type { StoreAccessors } from './register-tools';
+import { formatToolResult } from './register-tools';
 
 export interface CheckRow {
   tool: string;
@@ -76,6 +77,18 @@ export function runSelfCheck(stores: StoreAccessors): CheckRow[] {
   push('suggest_remediation', 'ranked suggestions with a runbook id', ideas, (d) => {
     const s = d as { suggestions?: unknown[] };
     return Array.isArray(s.suggestions);
+  });
+
+  const objectResult = formatToolResult({ services: [{ name: 'payment-gateway' }] });
+  push('structuredContent object', 'object payload copied onto structuredContent', objectResult, (d) => {
+    const r = d as { structuredContent?: { services?: unknown[] }; content?: Array<{ text: string }> };
+    return Array.isArray(r.structuredContent?.services) && typeof r.content?.[0]?.text === 'string';
+  });
+
+  const rowResult = formatToolResult([{ id: 'deploy_incident_root' }]);
+  push('structuredContent rows', 'arrays wrapped as { rows }', rowResult, (d) => {
+    const r = d as { structuredContent?: { rows?: unknown[] } };
+    return Array.isArray(r.structuredContent?.rows) && r.structuredContent.rows.length === 1;
   });
 
   const failed = rows.filter(r => !r.pass);
