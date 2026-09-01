@@ -2,7 +2,7 @@ Sevboard is an incident-response workspace for on-call SREs. People click the sa
 
 ## Try it
 
-Live demo: (deploy URL lands in this paragraph after the static host is up)
+Live demo: [sevboard.vercel.app](https://sevboard.vercel.app)
 
 Open the URL in ChatGPT Atlas, or in Chrome with `chrome://flags/#enable-webmcp-testing` enabled. There is no login. The fleet is simulated; the header says so.
 
