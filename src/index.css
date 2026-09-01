@@ -19,7 +19,7 @@ body {
   min-height: 100vh;
 }
 
-/* Scrollbar styling — dark theme */
+/* Scrollbar styling, dark theme */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

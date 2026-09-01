@@ -15,7 +15,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Strict mode — no shortcuts */
+    /* Strict mode: no shortcuts */
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,

@@ -141,13 +141,13 @@ export const useLogStore = create<LogStoreState>((set, get) => ({
 function inferCause(pattern: string): string {
   const p = pattern.toLowerCase();
   if (p.includes('timeout')) return 'Network connectivity or service overload causing request timeouts';
-  if (p.includes('clock skew') || p.includes('ntp')) return 'Clock synchronization issue — check NTP configuration on affected hosts';
-  if (p.includes('signature') || p.includes('verification')) return 'Webhook/API signature mismatch — likely clock skew or secret rotation issue';
-  if (p.includes('rate limit')) return 'Traffic exceeding configured rate limits — consider scaling or adjusting limits';
-  if (p.includes('connection pool')) return 'Connection pool exhaustion — increase pool size or investigate connection leaks';
-  if (p.includes('oom') || p.includes('memory')) return 'Memory pressure — review memory allocation and potential memory leaks';
-  if (p.includes('circuit breaker')) return 'Downstream dependency failure triggering circuit breaker — check dependent service health';
-  if (p.includes('dead letter')) return 'Message processing failures accumulating — review DLQ messages for root cause';
+  if (p.includes('clock skew') || p.includes('ntp')) return 'Clock synchronization issue - check NTP configuration on affected hosts';
+  if (p.includes('signature') || p.includes('verification')) return 'Webhook/API signature mismatch - likely clock skew or secret rotation issue';
+  if (p.includes('rate limit')) return 'Traffic exceeding configured rate limits - consider scaling or adjusting limits';
+  if (p.includes('connection pool')) return 'Connection pool exhaustion - increase pool size or investigate connection leaks';
+  if (p.includes('oom') || p.includes('memory')) return 'Memory pressure - review memory allocation and potential memory leaks';
+  if (p.includes('circuit breaker')) return 'Downstream dependency failure triggering circuit breaker - check dependent service health';
+  if (p.includes('dead letter')) return 'Message processing failures accumulating - review DLQ messages for root cause';
   return 'Review recent deployments and configuration changes for potential root cause';
 }
 

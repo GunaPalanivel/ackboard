@@ -22,63 +22,63 @@ const SERVICES_META = [
   { name: 'analytics-service', displayName: 'Analytics Service', language: 'Python', team: 'data' },
 ] as const;
 
-// Realistic error messages per service — NOT "Error occurred"
+// Realistic error messages per service - NOT "Error occurred"
 const ERROR_MESSAGES: Record<string, string[]> = {
   'api-gateway': [
     'upstream connect error or disconnect/reset before headers. retried and the latest reset reason: remote connection failure, transport failure reason: delayed connect error: 111',
-    'gRPC deadline exceeded on /orders.v1.OrderService/GetOrder after 5000ms — retried 3/3',
-    'rate limit exceeded: 847/500 req/s from client_id=svc_checkout_prod — circuit breaker OPEN',
-    'TLS handshake timeout to inventory-service.internal:443 — connection pool exhausted (max: 256)',
+    'gRPC deadline exceeded on /orders.v1.OrderService/GetOrder after 5000ms - retried 3/3',
+    'rate limit exceeded: 847/500 req/s from client_id=svc_checkout_prod - circuit breaker OPEN',
+    'TLS handshake timeout to inventory-service.internal:443 - connection pool exhausted (max: 256)',
     'request entity too large: payload 5.2MB exceeds limit of 1MB on POST /api/v2/bulk-import',
   ],
   'auth-service': [
-    'JWT token expired for user_id=usr_8f2k3j9x — refresh token also expired (max_age: 7d exceeded)',
-    'OAuth2 callback failed: state parameter mismatch — potential CSRF attack from IP 198.51.100.47',
-    'LDAP connection timeout after 5000ms — AD server ldap.corp.internal unreachable (attempt 3/3)',
-    'rate limit exceeded: 150/100 req/min from IP 203.0.113.42 — temporary ban applied (30s)',
-    'SAML assertion expired: NotOnOrAfter="2026-08-28T10:23:00Z" — clock skew >300s detected',
+    'JWT token expired for user_id=usr_8f2k3j9x - refresh token also expired (max_age: 7d exceeded)',
+    'OAuth2 callback failed: state parameter mismatch - potential CSRF attack from IP 198.51.100.47',
+    'LDAP connection timeout after 5000ms - AD server ldap.corp.internal unreachable (attempt 3/3)',
+    'rate limit exceeded: 150/100 req/min from IP 203.0.113.42 - temporary ban applied (30s)',
+    'SAML assertion expired: NotOnOrAfter="2026-08-28T10:23:00Z" - clock skew >300s detected',
   ],
   'payment-gateway': [
-    'Stripe webhook signature verification failed: timestamp delta 842s exceeds tolerance (300s) — clock skew detected on host ip-10-0-47-128',
-    'idempotency key collision on charge ch_3PqR4s5T6uV7w8X9 — duplicate charge prevented, returning cached response',
+    'Stripe webhook signature verification failed: timestamp delta 842s exceeds tolerance (300s) - clock skew detected on host ip-10-0-47-128',
+    'idempotency key collision on charge ch_3PqR4s5T6uV7w8X9 - duplicate charge prevented, returning cached response',
     'PCI DSS compliance check failed: TLS 1.2 required but client negotiated TLS 1.1 from 198.51.100.23',
-    'settlement batch #2847 failed: 3 of 847 transactions had invalid routing numbers — batch held for manual review',
-    'Stripe API rate limit: 429 Too Many Requests — retry-after: 2s (current: 98/100 req/s)',
+    'settlement batch #2847 failed: 3 of 847 transactions had invalid routing numbers - batch held for manual review',
+    'Stripe API rate limit: 429 Too Many Requests - retry-after: 2s (current: 98/100 req/s)',
   ],
   'order-service': [
-    'inventory reservation timeout for sku_9Xk2mN — inventory-service did not respond within 3000ms',
+    'inventory reservation timeout for sku_9Xk2mN - inventory-service did not respond within 3000ms',
     'order ord_7Yp3qR failed validation: shipping_address.postal_code "ABCDE" does not match pattern ^[0-9]{5}(-[0-9]{4})?$',
-    'DynamoDB ConditionCheckFailedException: order ord_2Mn4pQ version conflict (expected: 3, actual: 4) — concurrent modification',
-    'dead letter queue threshold exceeded: 47 failed order events in last 5m (threshold: 10) — alerting on-call',
-    'circuit breaker OPEN for payment-gateway: 12/20 requests failed in last 60s — fallback to queued processing',
+    'DynamoDB ConditionCheckFailedException: order ord_2Mn4pQ version conflict (expected: 3, actual: 4) - concurrent modification',
+    'dead letter queue threshold exceeded: 47 failed order events in last 5m (threshold: 10) - alerting on-call',
+    'circuit breaker OPEN for payment-gateway: 12/20 requests failed in last 60s - fallback to queued processing',
   ],
   'notification-worker': [
-    'SQS message processing timeout: msg_id=a7b3c9d1 exceeded visibility timeout (30s) — message will be redelivered',
-    'SendGrid API 503: Service Unavailable — email to usr_4Kp2mN queued for retry (attempt 2/5, backoff: 4s)',
-    'Firebase Cloud Messaging: InvalidRegistration for device token dGtv...x7Yz — token expired, marked for cleanup',
-    'template rendering failed: variable {{order.shipping_date}} is null for order ord_8Xm3nP — notification suppressed',
-    'rate limit exceeded: 50/50 emails/sec — throttling email queue, estimated drain time: 4m 23s',
+    'SQS message processing timeout: msg_id=a7b3c9d1 exceeded visibility timeout (30s) - message will be redelivered',
+    'SendGrid API 503: Service Unavailable - email to usr_4Kp2mN queued for retry (attempt 2/5, backoff: 4s)',
+    'Firebase Cloud Messaging: InvalidRegistration for device token dGtv...x7Yz - token expired, marked for cleanup',
+    'template rendering failed: variable {{order.shipping_date}} is null for order ord_8Xm3nP - notification suppressed',
+    'rate limit exceeded: 50/50 emails/sec - throttling email queue, estimated drain time: 4m 23s',
   ],
   'user-service': [
-    'PostgreSQL connection pool exhausted: 50/50 connections in use — 12 requests queued (max_wait: 5s)',
-    'bcrypt hash comparison timeout: CPU-bound operation exceeded 2000ms for user_id=usr_3Mn7pQ — possible DoS',
-    'profile image upload failed: S3 PutObject timeout after 10s — bucket us-east-1/user-avatars-prod unreachable',
-    'GDPR deletion request for user_id=usr_9Xk2mN: 3/7 downstream services acknowledged — retrying analytics-service, notification-worker',
-    'duplicate email registration attempt: existing user_id=usr_1Yp4qR holds email john.doe@example.com — returning 409',
+    'PostgreSQL connection pool exhausted: 50/50 connections in use - 12 requests queued (max_wait: 5s)',
+    'bcrypt hash comparison timeout: CPU-bound operation exceeded 2000ms for user_id=usr_3Mn7pQ - possible DoS',
+    'profile image upload failed: S3 PutObject timeout after 10s - bucket us-east-1/user-avatars-prod unreachable',
+    'GDPR deletion request for user_id=usr_9Xk2mN: 3/7 downstream services acknowledged - retrying analytics-service, notification-worker',
+    'duplicate email registration attempt: existing user_id=usr_1Yp4qR holds email john.doe@example.com - returning 409',
   ],
   'inventory-service': [
-    'Redis MOVED error: key inv:sku_7Xm3nP redirected to node 10.0.23.45:6379 — cluster resharding in progress',
-    'stock count inconsistency: sku_2Mn4pQ DB=847 vs cache=852 — triggering reconciliation job',
-    'warehouse API timeout: fulfillment-center-west did not respond within 3000ms — 23 SKUs in pending state',
-    'Elasticsearch bulk index failed: 12/500 documents rejected — mapping conflict on field "dimensions.weight" (expected: float, got: string)',
-    'low stock alert: sku_4Kp2mN quantity=3, reorder_point=10 — auto-purchase order PO-2847 created',
+    'Redis MOVED error: key inv:sku_7Xm3nP redirected to node 10.0.23.45:6379 - cluster resharding in progress',
+    'stock count inconsistency: sku_2Mn4pQ DB=847 vs cache=852 - triggering reconciliation job',
+    'warehouse API timeout: fulfillment-center-west did not respond within 3000ms - 23 SKUs in pending state',
+    'Elasticsearch bulk index failed: 12/500 documents rejected - mapping conflict on field "dimensions.weight" (expected: float, got: string)',
+    'low stock alert: sku_4Kp2mN quantity=3, reorder_point=10 - auto-purchase order PO-2847 created',
   ],
   'analytics-service': [
     'ClickHouse query timeout: SELECT with GROUP BY exceeded 30s on table events_raw (2.4B rows scanned)',
-    'Kafka consumer lag: topic=user-events partition=7 lag=184,723 messages — consumer group analytics-prod behind by ~12m',
-    'Apache Spark job spark-847-analytics-daily OOMKilled: executor requested 8GB, limit 4GB — increasing memory allocation',
+    'Kafka consumer lag: topic=user-events partition=7 lag=184,723 messages - consumer group analytics-prod behind by ~12m',
+    'Apache Spark job spark-847-analytics-daily OOMKilled: executor requested 8GB, limit 4GB - increasing memory allocation',
     'data pipeline stage "transform_events" failed: null pointer on event.properties.utm_source for event_id=evt_3Mn7pQ',
-    'BigQuery streaming insert quota exceeded: 100,000 rows/s limit reached — buffering 47,000 rows locally',
+    'BigQuery streaming insert quota exceeded: 100,000 rows/s limit reached - buffering 47,000 rows locally',
   ],
 };
 
@@ -124,34 +124,34 @@ const INFO_MESSAGES: Record<string, string[]> = {
 const WARN_MESSAGES: Record<string, string[]> = {
   'api-gateway': [
     'response time degradation: p99 increased from 45ms to 127ms for /api/v2/search in last 5m',
-    'connection pool utilization high: 231/256 (90%) — consider increasing pool size',
+    'connection pool utilization high: 231/256 (90%) - consider increasing pool size',
   ],
   'auth-service': [
-    'brute force detection: 47 failed login attempts from IP 198.51.100.23 in last 5m — monitoring',
+    'brute force detection: 47 failed login attempts from IP 198.51.100.23 in last 5m - monitoring',
     'certificate expiry warning: TLS cert for auth.internal expires in 14 days',
   ],
   'payment-gateway': [
-    'Stripe API latency elevated: p99=847ms (baseline: 200ms) — monitoring for degradation',
-    'refund processing delayed: 12 pending refunds older than 24h — manual review required',
+    'Stripe API latency elevated: p99=847ms (baseline: 200ms) - monitoring for degradation',
+    'refund processing delayed: 12 pending refunds older than 24h - manual review required',
   ],
   'order-service': [
-    'order backlog growing: 127 pending orders (threshold: 50) — processing rate: 12/min',
+    'order backlog growing: 127 pending orders (threshold: 50) - processing rate: 12/min',
     'discount calculation fallback: promo-service unreachable, using cached rules (age: 2h)',
   ],
   'notification-worker': [
-    'email bounce rate elevated: 2.1% (threshold: 1%) — reviewing sender reputation',
-    'push notification queue depth: 4,293 pending (threshold: 1,000) — FCM API throttling',
+    'email bounce rate elevated: 2.1% (threshold: 1%) - reviewing sender reputation',
+    'push notification queue depth: 4,293 pending (threshold: 1,000) - FCM API throttling',
   ],
   'user-service': [
-    'PostgreSQL replication lag: 4.2s (threshold: 2s) — read replica falling behind',
-    'memory usage high: 3.7GB/4GB (92%) — GC frequency increased to 4/min',
+    'PostgreSQL replication lag: 4.2s (threshold: 2s) - read replica falling behind',
+    'memory usage high: 3.7GB/4GB (92%) - GC frequency increased to 4/min',
   ],
   'inventory-service': [
-    'Redis cluster node 10.0.23.45 memory usage: 87% — approaching eviction threshold',
-    'stock reservation timeout rate: 4.2% (threshold: 1%) — inventory-service may be overloaded',
+    'Redis cluster node 10.0.23.45 memory usage: 87% - approaching eviction threshold',
+    'stock reservation timeout rate: 4.2% (threshold: 1%) - inventory-service may be overloaded',
   ],
   'analytics-service': [
-    'Kafka consumer rebalance triggered: 3 consumers joined group analytics-prod — temporary processing pause',
+    'Kafka consumer rebalance triggered: 3 consumers joined group analytics-prod - temporary processing pause',
     'ClickHouse merge operations queued: 47 parts pending merge on table events_raw',
   ],
 };
@@ -425,7 +425,7 @@ export function generateDeployments(): Deployment[] {
     timestamp: new Date(now - 92 * 60 * 1000).toISOString(), // 92 min ago
     status: 'success',
     commitHash: 'f3e8b21',
-    changelog: 'chore: routine infrastructure config refresh — NTP sources, TLS cert rotation, pod scheduling hints',
+    changelog: 'chore: routine infrastructure config refresh - NTP sources, TLS cert rotation, pod scheduling hints',
     filesChanged: 2,
     linesAdded: 12,
     linesRemoved: 8,
@@ -440,21 +440,21 @@ export function generateIncidents(): Incident[] {
   const now = Date.now();
 
   return [
-    // Active incident — this is what the agent will investigate
+    // Active incident - this is what the agent will investigate
     {
       id: 'INC-001',
-      title: 'Elevated error rate on payment-gateway — webhook signature failures',
+      title: 'Elevated error rate on payment-gateway - webhook signature failures',
       severity: 'P2-High',
       status: 'investigating',
       affectedServices: ['payment-gateway', 'order-service'],
-      description: 'Stripe webhook signature verification failures spiking since ~90 minutes ago. Error rate increased from 0.1% to 4.2%. Root cause: a config change deployed 5 days ago (NTP sync migration from ntpd to chrony in v1.8.3) altered clock sync behavior. A routine config refresh 90 minutes ago triggered chrony to resync, introducing clock skew >300s with Stripe servers. Pattern matches Cloudflare 1.1.1.1 incident (Jul 2025) — long-fuse configuration error.',
+      description: 'Stripe webhook signature verification failures spiking since ~90 minutes ago. Error rate increased from 0.1% to 4.2%. Root cause: a config change deployed 5 days ago (NTP sync migration from ntpd to chrony in v1.8.3) altered clock sync behavior. A routine config refresh 90 minutes ago triggered chrony to resync, introducing clock skew >300s with Stripe servers. Pattern matches Cloudflare 1.1.1.1 incident (Jul 2025) - long-fuse configuration error.',
       createdAt: new Date(now - 85 * 60 * 1000).toISOString(),
       updatedAt: new Date(now - 5 * 60 * 1000).toISOString(),
       timeline: [
         {
           timestamp: new Date(now - 5 * 24 * 60 * 60 * 1000).toISOString(),
           author: 'sarah.chen',
-          content: 'Deployed v1.8.3 to payment-gateway: "refactor: migrate NTP sync to chrony, update configuration" — 4 files changed, 47 additions, 23 deletions. All CI checks passed. No immediate impact observed.',
+          content: 'Deployed v1.8.3 to payment-gateway: "refactor: migrate NTP sync to chrony, update configuration" - 4 files changed, 47 additions, 23 deletions. All CI checks passed. No immediate impact observed.',
         },
         {
           timestamp: new Date(now - 92 * 60 * 1000).toISOString(),
@@ -489,7 +489,7 @@ export function generateIncidents(): Incident[] {
         {
           timestamp: new Date(now - 30 * 60 * 1000).toISOString(),
           author: 'marcus.johnson',
-          content: 'Cascade confirmed: order-service circuit breaker OPEN for payment-gateway (12/20 requests failed). notification-worker SQS queue backing up — dead letter queue threshold exceeded (47 failed events).',
+          content: 'Cascade confirmed: order-service circuit breaker OPEN for payment-gateway (12/20 requests failed). notification-worker SQS queue backing up - dead letter queue threshold exceeded (47 failed events).',
         },
         {
           timestamp: new Date(now - 5 * 60 * 1000).toISOString(),
@@ -498,10 +498,10 @@ export function generateIncidents(): Incident[] {
         },
       ],
     },
-    // Resolved incident — shows the cascade effect
+    // Resolved incident - shows the cascade effect
     {
       id: 'INC-002',
-      title: 'notification-worker SQS processing delays — cascade from INC-001',
+      title: 'notification-worker SQS processing delays - cascade from INC-001',
       severity: 'P3-Medium',
       status: 'monitoring',
       affectedServices: ['notification-worker', 'order-service'],
@@ -517,7 +517,7 @@ export function generateIncidents(): Incident[] {
         {
           timestamp: new Date(now - 40 * 60 * 1000).toISOString(),
           author: 'priya.sharma',
-          content: 'Investigating. SQS messages failing because order events reference payment confirmations that never arrived. Root cause is upstream — linked to INC-001.',
+          content: 'Investigating. SQS messages failing because order events reference payment confirmations that never arrived. Root cause is upstream - linked to INC-001.',
         },
         {
           timestamp: new Date(now - 20 * 60 * 1000).toISOString(),
