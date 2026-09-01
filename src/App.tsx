@@ -1,4 +1,4 @@
-// Sevboard: main application shell
+// Ackboard: main application shell
 
 import { useEffect, useState } from 'react';
 import {
@@ -122,7 +122,7 @@ function App() {
     return (
       <div className="flex items-center justify-center h-screen bg-slate-950 text-slate-400 font-sans">
         <div className="text-center">
-          <div className="text-2xl font-bold text-slate-50 mb-2">Sevboard</div>
+          <div className="text-2xl font-bold text-slate-50 mb-2">Ackboard</div>
           <div className="text-sm">Loading simulated fleet data...</div>
         </div>
       </div>
@@ -140,7 +140,7 @@ function App() {
 
       <header className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-slate-800 bg-slate-950 sticky top-0 z-50">
         <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-lg font-bold text-slate-50 tracking-tight">Sevboard</span>
+          <span className="text-lg font-bold text-slate-50 tracking-tight">Ackboard</span>
           <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
             webmcpStatus === 'connected'
               ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'

@@ -16,7 +16,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, info: ErrorInfo): void {
-    console.error('[Sevboard] render error', error, info.componentStack);
+    console.error('[Ackboard] render error', error, info.componentStack);
   }
 
   override render(): ReactNode {

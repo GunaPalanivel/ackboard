@@ -1,4 +1,4 @@
-// Sevboard domain types
+// Ackboard domain types
 
 // --- Service Health ---
 

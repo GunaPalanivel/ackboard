@@ -1,5 +1,5 @@
 // ============================================================
-// Sevboard simulated fleet data
+// Ackboard simulated fleet data
 // Generates realistic DevOps data that looks indistinguishable
 // from real production telemetry
 // ============================================================
@@ -623,7 +623,7 @@ export interface SeedData {
 }
 
 export function seedAll(): SeedData {
-  console.time('[Sevboard] Data generation');
+  console.time('[Ackboard] Data generation');
   const data: SeedData = {
     services: generateServices(),
     logs: generateLogs(2500),
@@ -631,7 +631,7 @@ export function seedAll(): SeedData {
     incidents: generateIncidents(),
     runbooks: generateRunbooks(),
   };
-  console.timeEnd('[Sevboard] Data generation');
-  console.info(`[Sevboard] Seeded: ${data.services.length} services, ${data.logs.length} logs, ${data.deployments.length} deployments, ${data.incidents.length} incidents, ${data.runbooks.length} runbooks`);
+  console.timeEnd('[Ackboard] Data generation');
+  console.info(`[Ackboard] Seeded: ${data.services.length} services, ${data.logs.length} logs, ${data.deployments.length} deployments, ${data.incidents.length} incidents, ${data.runbooks.length} runbooks`);
   return data;
 }

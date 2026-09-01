@@ -1,4 +1,4 @@
-// Sevboard Zustand stores
+// Ackboard Zustand stores
 
 import { create } from 'zustand';
 import type {
@@ -293,7 +293,7 @@ export const useIncidentStore = create<IncidentStoreState>((set, get) => ({
       updatedAt: now,
       timeline: [{
         timestamp: now,
-        author: 'Sevboard Agent',
+        author: 'Ackboard Agent',
         content: `Incident created: ${data['title'] as string}`,
       }],
     };
@@ -307,10 +307,10 @@ export const useIncidentStore = create<IncidentStoreState>((set, get) => ({
       const now = new Date().toISOString();
       const newTimeline = [...i.timeline];
       if (data['note']) {
-        newTimeline.push({ timestamp: now, author: 'Sevboard Agent', content: data['note'] as string });
+        newTimeline.push({ timestamp: now, author: 'Ackboard Agent', content: data['note'] as string });
       }
       if (data['status']) {
-        newTimeline.push({ timestamp: now, author: 'Sevboard Agent', content: `Status changed to ${data['status'] as string}` });
+        newTimeline.push({ timestamp: now, author: 'Ackboard Agent', content: `Status changed to ${data['status'] as string}` });
       }
       return {
         ...i,

@@ -30,7 +30,7 @@ export function runSelfCheck(stores: StoreAccessors): CheckRow[] {
     const row = { tool, expected, actual: summarize(data), pass };
     rows.push(row);
     const mark = pass ? 'pass' : 'FAIL';
-    console.info(`[Sevboard] self-check ${mark} ${tool}`);
+    console.info(`[Ackboard] self-check ${mark} ${tool}`);
   };
 
   const status = stores.getServiceStatus() as { services?: unknown[] };
@@ -80,9 +80,9 @@ export function runSelfCheck(stores: StoreAccessors): CheckRow[] {
 
   const failed = rows.filter(r => !r.pass);
   if (failed.length === 0) {
-    console.info(`[Sevboard] self-check: ${rows.length} checks passed`);
+    console.info(`[Ackboard] self-check: ${rows.length} checks passed`);
   } else {
-    console.warn(`[Sevboard] self-check: ${failed.length} failed`, failed);
+    console.warn(`[Ackboard] self-check: ${failed.length} failed`, failed);
   }
   return rows;
 }

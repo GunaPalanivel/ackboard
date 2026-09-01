@@ -1,8 +1,8 @@
-Sevboard is an incident-response workspace for on-call SREs. People click the same panels an in-browser agent can call as WebMCP tools, so a triage that used to take six clicks can finish in one turn, with a human still approving anything that writes.
+Ackboard is an incident-response workspace for on-call SREs. People click the same panels an in-browser agent can call as WebMCP tools, so a triage that used to take six clicks can finish in one turn, with a human still approving anything that writes.
 
 ## Try it
 
-Live demo: [sevboard.vercel.app](https://sevboard.vercel.app)
+Live demo: [ackboard.vercel.app](https://ackboard.vercel.app)
 
 Open the URL in ChatGPT Atlas, or in Chrome with `chrome://flags/#enable-webmcp-testing` enabled. There is no login. The fleet is simulated; the header says so.
 

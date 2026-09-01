@@ -1,4 +1,4 @@
-// Sevboard tool registration
+// Ackboard tool registration
 // Chrome imperative API (docs updated 2026-08-20):
 //   document.modelContext.registerTool(tool, { signal })
 //   execute(input, { signal })
@@ -156,7 +156,7 @@ export function setConfirmHandler(handler: ((req: ConfirmRequest) => Promise<boo
 
 async function requestConfirmation(req: ConfirmRequest): Promise<boolean> {
   if (!confirmHandler) {
-    console.warn('[Sevboard] No confirmation handler set. Auto-rejecting write operation.');
+    console.warn('[Ackboard] No confirmation handler set. Auto-rejecting write operation.');
     return false;
   }
   return confirmHandler(req);
@@ -231,12 +231,12 @@ export function initializeWebMCP(stores: StoreAccessors): () => void {
 
   if (!ctx) {
     console.info(
-      '%c[Sevboard] %cWebMCP not detected. Running in standalone mode.',
+      '%c[Ackboard] %cWebMCP not detected. Running in standalone mode.',
       'color: #3B82F6; font-weight: bold',
       'color: #94A3B8',
     );
     console.info(
-      '%c[Sevboard] %cTo enable: use ChatGPT in-app browser, or Chrome with chrome://flags/#enable-webmcp-testing',
+      '%c[Ackboard] %cTo enable: use ChatGPT in-app browser, or Chrome with chrome://flags/#enable-webmcp-testing',
       'color: #3B82F6; font-weight: bold',
       'color: #94A3B8',
     );
@@ -592,12 +592,12 @@ export function initializeWebMCP(stores: StoreAccessors): () => void {
         await ctx.registerTool(tool.definition, { signal: registration.signal });
         toolsRegistered += 1;
       } catch (err) {
-        console.warn(`[Sevboard] Failed to register ${tool.name}`, err);
+        console.warn(`[Ackboard] Failed to register ${tool.name}`, err);
       }
     }
     if (registration.signal.aborted) return;
     console.info(
-      `%c[Sevboard] %cWebMCP connected, ${toolsRegistered} tools registered`,
+      `%c[Ackboard] %cWebMCP connected, ${toolsRegistered} tools registered`,
       'color: #3B82F6; font-weight: bold',
       'color: #22C55E; font-weight: bold',
     );
