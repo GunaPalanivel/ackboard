@@ -15,9 +15,9 @@ const DeploymentTimeline: React.FC = () => {
   const [limit, setLimit] = useState(10);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const getDeployments = useDeploymentStore((state) => state.getAll);
-  const deployments = getDeployments(undefined, undefined, limit);
-  const totalCount = useDeploymentStore.getState().deployments.length;
+  const allDeployments = useDeploymentStore((state) => state.deployments);
+  const deployments = allDeployments.slice(0, limit);
+  const totalCount = allDeployments.length;
 
   return (
     <div className="flex flex-col h-full bg-slate-900 border border-slate-800 rounded-lg overflow-hidden">

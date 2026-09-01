@@ -29,7 +29,8 @@ const MetricsPanel: React.FC = () => {
   const [selectedMetric, setSelectedMetric] = useState<MetricName>('error_rate');
 
   const getMetrics = useMetricStore((state) => state.getMetrics);
-  const serviceNames = useServiceStore((state) => state.getServiceNames());
+  const services = useServiceStore((state) => state.services);
+  const serviceNames = services.map((s) => s.name);
 
   const metricData = getMetrics(selectedService, selectedMetric);
 

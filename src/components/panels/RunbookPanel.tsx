@@ -7,8 +7,9 @@ interface RunbookPanelProps {
 }
 
 const RunbookPanel: React.FC<RunbookPanelProps> = ({ onExecuteStep }) => {
-  const runbooks = useRunbookStore((state) => state.getAll());
-  const [selectedRunbookId, setSelectedRunbookId] = useState<string>(runbooks[0]?.id || '');
+  const runbooks = useRunbookStore((state) => state.runbooks);
+  const [pickedId, setPickedId] = useState<string | null>(null);
+  const selectedRunbookId = pickedId ?? runbooks[0]?.id ?? '';
 
   const runbook = runbooks.find(r => r.id === selectedRunbookId);
 
@@ -18,7 +19,7 @@ const RunbookPanel: React.FC<RunbookPanelProps> = ({ onExecuteStep }) => {
         <h3 className="text-sm font-semibold text-slate-200 whitespace-nowrap">Runbook Executor</h3>
         <select
           value={selectedRunbookId}
-          onChange={(e) => setSelectedRunbookId(e.target.value)}
+          onChange={(e) => setPickedId(e.target.value)}
           className="w-full bg-slate-950 border border-slate-800 rounded-md py-1 px-2 text-sm text-slate-50 focus:outline-none focus:border-blue-500 truncate"
         >
           {runbooks.map((rb) => (

@@ -21,7 +21,8 @@ const LogViewer: React.FC = () => {
   const [limit, setLimit] = useState(100);
 
   const searchLogs = useLogStore((state) => state.search);
-  const serviceNames = useServiceStore((state) => state.getServiceNames());
+  const services = useServiceStore((state) => state.services);
+  const serviceNames = services.map((s) => s.name);
 
   const result = useMemo(() => {
     return searchLogs({
