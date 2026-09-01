@@ -28,7 +28,7 @@ Write, with confirmation. `create_incident`, `update_incident`, and `execute_run
 
 ## Why WebMCP
 
-An SRE can ask the agent to pull recent payment-gateway deploys, correlate the error spike with the chrony NTP change from five days ago, and draft INC-001, in one turn. Doing that by hand is: open health, filter logs, open metrics, open deploys, expand the suspect row, open the incident form. The agent and the human share the tab, so the human sees panels pulse as tools run and can stop a rollback before it happens.
+An SRE can ask the agent to pull recent payment-gateway deploys, correlate the error spike with the chrony NTP change from five days ago, and draft an incident, in one turn. Doing that by hand is: open health, filter logs, open metrics, open deploys, expand the suspect row, open the incident form. The agent and the human share the tab, so the human sees panels pulse as tools run and can stop a rollback before it happens.
 
 Server MCP would copy this data to a remote process. WebMCP keeps it in the page. That matches an ops console that already has the session and should not export production logs to a third box just so a model can read them.
 
@@ -41,17 +41,17 @@ Example call:
 }
 ```
 
-The page returns JSON with status, error rate, and p99. Then `search_logs` with `query: "signature verification"` and `analyze_error_patterns` on the same service. The write path only proceeds after the modal.
+The page returns JSON text plus `structuredContent` (objects as-is, lists wrapped as `{ rows }`) so a client that understands MCP structured results does not have to parse a string. Then `search_logs` with `query: "signature verification"` and `analyze_error_patterns` on the same service. The write path only proceeds after the modal.
 
 Implementation lives in `src/webmcp/register-tools.ts`. Tools register on `document.modelContext` (with `navigator.modelContext` as the old alias). Annotations nest as `{ readOnlyHint, untrustedContentHint }`. `execute` accepts `{ signal }`. Unregister is `AbortController.abort` on unmount. Types come from `@mcp-b/webmcp-types`. HITL is documented in `docs/adr/0002-human-in-the-loop.md`.
 
 ## Landscape
 
-WebKit filed `position: oppose` on 2026-06-03 (WebKit/standards-positions#670). Mozilla filed `position: neutral` (mozilla/standards-positions#1412) and has discussed the imperative API since. Chrome ships the API behind a flag and by default in ChatGPT Atlas. Turkish Airlines has WebMCP tools in production. This repo is another adoption data point on that split.
+WebKit has opposed (WebKit/standards-positions#670). Mozilla has filed no formal position (mozilla/standards-positions#1412, open). In practice WebMCP today means Chromium: Chrome ships the API behind a flag, and ChatGPT Atlas enables it by default. Turkish Airlines has WebMCP tools in production. This repo is another adoption data point on that split.
 
 ## Limits
 
-The fleet is simulated. This repo was verified with `npm run check` and a no-WebMCP browser fallback. ChatGPT Atlas was not run here (dev machine is Windows). `requestUserInteraction()` is still an open discussion, so writes use an in-page modal.
+The fleet is simulated. This repo was verified with `npm run check` and a no-WebMCP browser fallback. ChatGPT Atlas still needs a human pass on the live URL. `requestUserInteraction()` is still an open discussion, so writes use an in-page modal.
 
 ## License
 
