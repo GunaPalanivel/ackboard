@@ -11,7 +11,7 @@ export const REPO_ROOT = path.resolve(APP_ROOT, '..');
 export const EVIDENCE_DIR = path.join(REPO_ROOT, '.idea', 'evidence');
 export const TMP_DIR = path.join(APP_ROOT, '.tmp');
 
-export const LIVE_URL = 'https://ackboard.vercel.app';
+export const LIVE_URL = process.env.ACKBOARD_TARGET_URL || 'https://ackboard.vercel.app';
 export const CONNECTED_BANNER = 'WebMCP connected, 11 tools registered';
 
 export const EXPECTED_TOOLS = [
