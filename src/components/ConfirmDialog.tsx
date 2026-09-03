@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { setConfirmHandler } from '@/webmcp/register-tools';
 import type { ConfirmRequest } from '@/webmcp/register-tools';
 import { ShieldCheck } from 'lucide-react';
@@ -10,14 +10,26 @@ interface PendingRequest {
 
 export default function ConfirmDialog() {
   const [request, setRequest] = useState<PendingRequest | null>(null);
+  const pendingRef = useRef<PendingRequest | null>(null);
 
   useEffect(() => {
-    setConfirmHandler((req) => {
-      return new Promise<boolean>((resolve) => {
-        setRequest({ req, resolve });
-      });
-    });
-    return () => setConfirmHandler(null);
+    setConfirmHandler(
+      (req) => {
+        return new Promise<boolean>((resolve) => {
+          const pending = { req, resolve };
+          pendingRef.current = pending;
+          setRequest(pending);
+        });
+      },
+      () => {
+        const pending = pendingRef.current;
+        if (!pending) return;
+        pending.resolve(false);
+        pendingRef.current = null;
+        setRequest(null);
+      },
+    );
+    return () => setConfirmHandler(null, null);
   }, []);
 
   useEffect(() => {
@@ -25,10 +37,12 @@ export default function ConfirmDialog() {
       if (!request) return;
       if (e.key === 'Enter') {
         e.preventDefault();
+        pendingRef.current = null;
         request.resolve(true);
         setRequest(null);
       } else if (e.key === 'Escape') {
         e.preventDefault();
+        pendingRef.current = null;
         request.resolve(false);
         setRequest(null);
       }
@@ -42,11 +56,13 @@ export default function ConfirmDialog() {
   const { req } = request;
 
   const handleApprove = () => {
+    pendingRef.current = null;
     request.resolve(true);
     setRequest(null);
   };
 
   const handleDecline = () => {
+    pendingRef.current = null;
     request.resolve(false);
     setRequest(null);
   };

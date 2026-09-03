@@ -162,9 +162,18 @@ export interface ConfirmRequest {
 }
 
 let confirmHandler: ((req: ConfirmRequest) => Promise<boolean>) | null = null;
+let dismissConfirm: (() => void) | null = null;
 
-export function setConfirmHandler(handler: ((req: ConfirmRequest) => Promise<boolean>) | null): void {
+export function setConfirmHandler(
+  handler: ((req: ConfirmRequest) => Promise<boolean>) | null,
+  dismiss?: (() => void) | null,
+): void {
   confirmHandler = handler;
+  dismissConfirm = dismiss ?? null;
+}
+
+export function cancelPendingConfirmation(): void {
+  dismissConfirm?.();
 }
 
 export async function requestConfirmation(req: ConfirmRequest): Promise<boolean> {
@@ -263,7 +272,9 @@ export function initializeWebMCP(stores: StoreAccessors): () => void {
   function wrapTool(
     name: string,
     fn: (input: Record<string, unknown>, exec: ExecuteContext) => Promise<ToolResult> | ToolResult,
+    options?: { timeoutMs?: number | null },
   ) {
+    const timeoutMs = options?.timeoutMs === undefined ? 10_000 : options.timeoutMs;
     return async (input: Record<string, unknown>, exec: ExecuteContext = {}): Promise<ToolResult> => {
       if (isAborted(exec.signal) || isAborted(registration.signal)) {
         return toolError('Tool call was aborted');
@@ -281,13 +292,13 @@ export function initializeWebMCP(stores: StoreAccessors): () => void {
       recordActivity(name, TOOL_PANEL_MAP[name] ?? 'unknown');
 
       try {
-        const result = await runWithBudget(
-          Promise.resolve(fn(input, exec)),
-          10_000,
-          exec.signal,
-        );
-        return result;
+        const work = Promise.resolve(fn(input, exec));
+        if (timeoutMs == null) {
+          return await work;
+        }
+        return await runWithBudget(work, timeoutMs, exec.signal);
       } catch (err) {
+        cancelPendingConfirmation();
         const message = err instanceof Error ? err.message : 'Unknown error';
         return toolError(`Tool "${name}" failed: ${message}`);
       }
@@ -487,7 +498,7 @@ export function initializeWebMCP(stores: StoreAccessors): () => void {
           }
           const incident = stores.createIncident(input);
           return toolSuccess({ status: 'created', incident });
-        }),
+        }, { timeoutMs: null }),
       },
     },
     {
@@ -523,7 +534,7 @@ export function initializeWebMCP(stores: StoreAccessors): () => void {
           const result = stores.updateIncident(input['incidentId'] as string, input);
           if (!result) return toolError('Incident not found');
           return toolSuccess({ status: 'updated', incident: result });
-        }),
+        }, { timeoutMs: null }),
       },
     },
     {
@@ -554,7 +565,7 @@ export function initializeWebMCP(stores: StoreAccessors): () => void {
           }
           const result = await stores.executeRunbookStep(runbookId, stepIndex);
           return toolSuccess(result);
-        }),
+        }, { timeoutMs: null }),
       },
     },
     {
