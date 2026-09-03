@@ -87,9 +87,9 @@ function reuseSentence(
     );
   }
   if (bits.length === 0) {
-    return "Automated agent verification did not pass. Do not claim a working agent client until it does. ChatGPT Atlas was not part of this pass.";
+    return "Automated agent verification did not pass. Do not claim a working agent client until it does. ChatGPT desktop in-app browser was not part of this pass.";
   }
-  return `${bits.join(". ")}. ChatGPT Atlas was not part of this pass.`;
+  return `${bits.join(". ")}. ChatGPT desktop in-app browser was not part of this pass.`;
 }
 
 function main(): void {
@@ -178,19 +178,19 @@ ${mcpLine}
 
 Reproduce: \`npm run verify:mcp\`
 
-## Atlas (manual, still yours)
+## ChatGPT desktop in-app browser (manual, still yours)
 
-Not run from this harness. Do not write Atlas into Devpost until you have done this:
+Not run from this harness. Do not write ChatGPT desktop or Atlas into Devpost until you have done this:
 
-1. Open ChatGPT desktop, in-app browser (Atlas).
-2. Go to ${LIVE_URL}. No login.
+1. Open the ChatGPT desktop app built-in browser (the judge client in the official rules).
+2. Go to ${LIVE_URL}. No login. Allow the site if ChatGPT asks.
 3. DevTools console should show \`WebMCP connected, 11 tools registered\`. Header badge: WebMCP connected.
 4. Paste: \`Triage the payment-gateway errors. Check health, search logs for signature failures, look at recent deploys, tell me the likely cause.\`
 5. Watch get_service_status / search_logs / get_deployments fire and panels pulse.
 6. Paste: \`Open a P1 incident for this and show me the rollback runbook. Do not execute a step until I approve.\`
 7. Approve or Decline the modal. Note which.
 
-If Atlas is missing on Windows, film Chrome with \`chrome://flags/#enable-webmcp-testing\` (this machine already proved that path) and keep the sentence above. Do not add Atlas.
+If ChatGPT desktop is unavailable on Windows, film Chrome with \`chrome://flags/#enable-webmcp-testing\` (this machine already proved that path) and keep the sentence above. Do not add Atlas or ChatGPT desktop.
 
 ## Commands
 

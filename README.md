@@ -4,7 +4,7 @@ Ackboard is an incident-response workspace for on-call SREs. People click the sa
 
 Live demo: [ackboard.vercel.app](https://ackboard.vercel.app)
 
-Open the URL in ChatGPT Atlas, or in Chrome with `chrome://flags/#enable-webmcp-testing` enabled. There is no login. The fleet is simulated; the header says so.
+Open the URL in ChatGPT's in-app browser, or in Chrome with `chrome://flags/#enable-webmcp-testing` enabled. There is no login. The fleet is simulated; the header says so.
 
 ![Ackboard dashboard](docs/screenshots/desktop.png)
 
@@ -14,7 +14,7 @@ npm run check
 npm run dev
 ```
 
-`npm run check` runs the store logic behind every read tool. `npm run verify` proves native Chrome 152 registration on the live URL and the full tool chain including the write modal. It does not replace a ChatGPT Atlas pass.
+`npm run check` runs the store logic behind every read tool. `npm run verify` proves native Chrome 152 registration on the live URL and the full tool chain including the write modal. It does not replace a ChatGPT desktop in-app browser pass.
 
 ## Tool shape
 
@@ -49,11 +49,11 @@ Implementation lives in `src/webmcp/register-tools.ts`. Tools register on `docum
 
 ## Landscape
 
-WebKit has opposed (WebKit/standards-positions#670). Mozilla has filed no formal position (mozilla/standards-positions#1412, open). In practice WebMCP today means Chromium: Chrome ships the API behind a flag, and ChatGPT Atlas enables it by default. Turkish Airlines has WebMCP tools in production. This repo is another adoption data point on that split.
+WebKit has opposed (WebKit/standards-positions#670). Mozilla has filed no formal position (mozilla/standards-positions#1412, open). In practice WebMCP today means Chromium: Chrome ships the API behind a flag, and ChatGPT's in-app browser is the client the challenge rules name for judging. Turkish Airlines has WebMCP tools in production. This repo is another adoption data point on that split.
 
 ## Limits
 
-The fleet is simulated. Native registration was verified in Chrome 152 with the WebMCP flag against https://ackboard.vercel.app (`document.modelContext`, 11 tools, console banner). Invocation of the triage chain, including Decline-as-cancel and Approve-to-write, was verified through the model-context surface. ChatGPT Atlas was not used in that pass. `requestUserInteraction()` is still an open discussion, so writes use an in-page modal.
+The fleet is simulated. Native registration was verified in Chrome 152 with the WebMCP flag against https://ackboard.vercel.app (`document.modelContext`, 11 tools, console banner). Invocation of the triage chain, including Decline-as-cancel and Approve-to-write, was verified through the model-context surface. ChatGPT desktop in-app browser was not used in that pass. `requestUserInteraction()` is still an open discussion, so writes use an in-page modal.
 
 ## License
 

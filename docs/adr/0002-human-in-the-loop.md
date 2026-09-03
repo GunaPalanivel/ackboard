@@ -24,6 +24,6 @@ Gate writes on `ConfirmDialog`. `execute` does not return until Approve or Decli
 
 ## Consequences
 
-HITL works in ChatGPT Atlas and in Chrome with the flag, without waiting on a spec landing. When elicitation ships, we pick it up without changing the three write tools.
+HITL works in Chrome with the WebMCP flag, without waiting on a spec landing. The same modal is what a ChatGPT in-app browser session would see if the client lists the page tools. When elicitation ships, we pick it up without changing the three write tools.
 
 Write-tool `execute` is not wrapped in the 10 second read timeout. The promise stays pending until Approve or Decline. If a read-tool timeout or abort happens while a modal is up, `cancelPendingConfirmation` resolves the pending confirm as declined so a late click cannot still mutate state.
