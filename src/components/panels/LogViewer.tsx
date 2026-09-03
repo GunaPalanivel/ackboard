@@ -1,23 +1,33 @@
-import React, { useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { useLogStore, useServiceStore } from '@/stores';
-import type { LogSeverity } from '@/types';
+import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
+import { format } from "date-fns";
 
-const SEVERITIES: LogSeverity[] = ['debug', 'info', 'warn', 'error', 'fatal'];
+import Panel from "@/components/Panel";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { nativeControlClass } from "@/lib/field";
+import { cn } from "@/lib/utils";
+import { useLogStore, useServiceStore } from "@/stores";
+import type { LogSeverity } from "@/types";
 
-const SEVERITY_COLORS: Record<LogSeverity, string> = {
-  fatal: 'bg-red-500/10 text-red-500 border-red-500/20',
-  error: 'bg-red-500/10 text-red-500 border-red-500/20',
-  warn: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
-  info: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-  debug: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
-};
+const SEVERITIES: LogSeverity[] = ["debug", "info", "warn", "error", "fatal"];
 
-const LogViewer: React.FC = () => {
-  const [query, setQuery] = useState('');
-  const [selectedSeverity, setSelectedSeverity] = useState<LogSeverity | ''>('');
-  const [selectedService, setSelectedService] = useState<string>('');
+function severityVariant(
+  sev: LogSeverity
+): "muted" | "default" | "warning" | "destructive" {
+  if (sev === "fatal" || sev === "error") return "destructive";
+  if (sev === "warn") return "warning";
+  if (sev === "info") return "default";
+  return "muted";
+}
+
+export default function LogViewer() {
+  const [query, setQuery] = useState("");
+  const [selectedSeverity, setSelectedSeverity] = useState<LogSeverity | "">(
+    ""
+  );
+  const [selectedService, setSelectedService] = useState("");
   const [limit, setLimit] = useState(100);
 
   const searchLogs = useLogStore((state) => state.search);
@@ -34,82 +44,110 @@ const LogViewer: React.FC = () => {
   }, [query, selectedSeverity, selectedService, limit, searchLogs]);
 
   return (
-    <div className="flex flex-col h-full bg-slate-900 border border-slate-800 rounded-lg overflow-hidden">
-      <div className="p-4 border-b border-slate-800 space-y-4">
-        <div className="flex items-center gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-            <input
-              type="text"
-              placeholder="Search logs..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-md py-1.5 pl-9 pr-3 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            />
-          </div>
-          <select
-            value={selectedService}
-            onChange={(e) => setSelectedService(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-md py-1.5 px-3 text-sm text-slate-50 focus:outline-none focus:border-blue-500"
-          >
-            <option value="">All Services</option>
-            {serviceNames.map((name) => (
-              <option key={name} value={name}>{name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {SEVERITIES.map((sev) => (
-              <button
-                key={sev}
-                onClick={() => setSelectedSeverity(selectedSeverity === sev ? '' : sev)}
-                className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                  selectedSeverity === sev
-                    ? 'bg-slate-700 border-slate-500 text-slate-50'
-                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800'
-                }`}
-              >
-                {sev.toUpperCase()}
-              </button>
-            ))}
-          </div>
-          <div className="text-xs text-slate-400">
-            {result.totalMatches} matches
-          </div>
-        </div>
-      </div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {result.entries.length === 0 && (
-          <p className="text-sm text-slate-500 py-8 text-center">No log lines match these filters.</p>
-        )}
-        {result.entries.map((entry) => (
-          <div key={entry.id} className="flex items-start gap-3 text-sm border-b border-slate-800/50 pb-2 last:border-0">
-            <div className="text-xs text-slate-500 whitespace-nowrap min-w-[60px] pt-0.5">
-              {formatDistanceToNow(new Date(entry.timestamp))} ago
-            </div>
-            <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded border uppercase min-w-[50px] text-center ${SEVERITY_COLORS[entry.severity]}`}>
-              {entry.severity}
-            </div>
-            <div className="text-xs text-slate-400 font-medium min-w-[120px] pt-0.5 truncate">
-              {entry.service}
-            </div>
-            <div className="text-slate-300 font-mono text-xs break-all pt-0.5">
-              {entry.message}
-            </div>
-          </div>
-        ))}
-        {result.totalMatches > limit && (
+    <Panel
+      title="Logs"
+      actions={
+        <span className="text-xs text-muted-foreground tabular-nums">
+          {result.totalMatches} matches
+        </span>
+      }
+      bodyClassName="flex flex-col"
+    >
+      <div className="flex h-11 shrink-0 items-center gap-2 overflow-x-auto border-b border-border px-4">
+        <Input
+          leading={<Search className="size-4" />}
+          type="text"
+          placeholder="Search logs..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <select
+          value={selectedService}
+          onChange={(e) => setSelectedService(e.target.value)}
+          className={cn(nativeControlClass, "max-w-[160px] shrink-0")}
+        >
+          <option value="">All services</option>
+          {serviceNames.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+        <div className="flex h-8 shrink-0 items-center gap-0.5 rounded-md border border-border p-0.5">
           <button
-            onClick={() => setLimit(l => l + 100)}
-            className="w-full py-2 text-sm text-slate-400 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-md transition-colors"
+            type="button"
+            onClick={() => setSelectedSeverity("")}
+            className={cn(
+              "h-7 shrink-0 rounded px-2 text-xs font-medium whitespace-nowrap",
+              selectedSeverity === ""
+                ? "bg-muted text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            )}
           >
-            Load more
+            All
           </button>
+          {SEVERITIES.map((sev) => (
+            <button
+              key={sev}
+              type="button"
+              onClick={() =>
+                setSelectedSeverity(selectedSeverity === sev ? "" : sev)
+              }
+              className={cn(
+                "h-7 shrink-0 rounded px-2 text-xs font-medium capitalize whitespace-nowrap",
+                selectedSeverity === sev
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {sev}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        {result.entries.length === 0 ? (
+          <p className="px-4 py-12 text-center text-sm text-muted-foreground">
+            No log lines match these filters.
+          </p>
+        ) : (
+          result.entries.map((entry) => (
+            <div
+              key={entry.id}
+              className="grid grid-cols-[72px_52px_140px_minmax(0,1fr)] items-start gap-x-3 border-b border-border px-4 py-2 hover:bg-white/[0.03]"
+            >
+              <time className="pt-0.5 font-mono text-xs tabular-nums text-muted-foreground">
+                {format(new Date(entry.timestamp), "HH:mm:ss")}
+              </time>
+              <Badge
+                variant={severityVariant(entry.severity)}
+                className="w-[52px] justify-center px-0 text-[11px] uppercase"
+              >
+                {entry.severity}
+              </Badge>
+              <span className="truncate pt-0.5 text-xs text-muted-foreground">
+                {entry.service}
+              </span>
+              <p className="min-w-0 break-words font-mono text-xs leading-5 text-foreground">
+                {entry.message}
+              </p>
+            </div>
+          ))
+        )}
+        {result.totalMatches > limit && (
+          <div className="px-4 py-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => setLimit((l) => l + 100)}
+            >
+              Load more
+            </Button>
+          </div>
         )}
       </div>
-    </div>
+    </Panel>
   );
-};
-
-export default LogViewer;
+}

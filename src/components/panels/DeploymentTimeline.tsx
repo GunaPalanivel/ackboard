@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ChevronDown, ChevronRight, GitCommit } from 'lucide-react';
+
+import Panel from '@/components/Panel';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { useDeploymentStore } from '@/stores';
 import type { DeploymentStatus } from '@/types';
 
-const STATUS_COLORS: Record<DeploymentStatus, string> = {
-  success: 'bg-green-500/10 text-green-500 border-green-500/20',
-  failed: 'bg-red-500/10 text-red-500 border-red-500/20',
-  'rolled-back': 'bg-amber-500/10 text-amber-500 border-amber-500/20',
-  'in-progress': 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+const STATUS_VARIANT: Record<DeploymentStatus, 'success' | 'destructive' | 'warning' | 'default'> = {
+  success: 'success',
+  failed: 'destructive',
+  'rolled-back': 'warning',
+  'in-progress': 'default',
 };
 
-const DeploymentTimeline: React.FC = () => {
+export default function DeploymentTimeline() {
   const [limit, setLimit] = useState(10);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -20,89 +25,73 @@ const DeploymentTimeline: React.FC = () => {
   const totalCount = allDeployments.length;
 
   return (
-    <div className="flex flex-col h-full bg-slate-900 border border-slate-800 rounded-lg overflow-hidden">
-      <div className="p-4 border-b border-slate-800">
-        <h3 className="text-sm font-semibold text-slate-200">Deployment History</h3>
-      </div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 relative">
-        {deployments.length === 0 && (
-          <p className="text-sm text-slate-500 relative z-10">No deployments match this view.</p>
-        )}
-        <div className="absolute left-6 top-4 bottom-4 w-px bg-slate-800 z-0"></div>
-        {deployments.map((dep) => {
-          const isIncidentRoot = dep.service === 'payment-gateway' && dep.version === 'v1.8.3' && dep.deployer === 'sarah.chen';
+    <Panel title="Deployments" bodyClassName="overflow-y-auto">
+      {deployments.length === 0 ? (
+        <p className="px-4 py-12 text-center text-sm text-muted-foreground">
+          No deployments match this view.
+        </p>
+      ) : (
+        deployments.map((dep) => {
+          const isIncidentRoot =
+            dep.service === 'payment-gateway' &&
+            dep.version === 'v1.8.3' &&
+            dep.deployer === 'sarah.chen';
           const isExpanded = expandedId === dep.id;
 
           return (
-            <div
-              key={dep.id}
-              className={`relative z-10 pl-8 transition-all ${isIncidentRoot ? 'opacity-100' : 'opacity-90 hover:opacity-100'}`}
-            >
-              <div
-                className={`absolute left-0 top-1.5 w-3 h-3 rounded-full border-2 ${
-                  isIncidentRoot ? 'bg-red-500 border-red-300 animate-pulse' : 'bg-slate-900 border-slate-500'
-                }`}
-                style={{ transform: 'translateX(2.5px)' }}
-              />
-              <div
-                className={`p-3 rounded-lg border cursor-pointer ${
-                  isIncidentRoot ? 'border-amber-500/50 bg-red-950/20' : 'border-slate-800 bg-slate-950 hover:border-slate-700'
-                }`}
+            <div key={dep.id} className="border-b border-border">
+              <button
+                type="button"
                 onClick={() => setExpandedId(isExpanded ? null : dep.id)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
-                    <span className="font-semibold text-sm text-slate-200">{dep.service}</span>
-                    <span className="text-xs font-mono text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded">
-                      {dep.version}
-                    </span>
-                    {isIncidentRoot && (
-                      <span className="text-[10px] font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded uppercase">
-                        ⚠ Incident Correlation
-                      </span>
-                    )}
-                  </div>
-                  <div className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${STATUS_COLORS[dep.status]}`}>
-                    {dep.status}
-                  </div>
-                </div>
-                <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-slate-400">{dep.deployer}</span>
-                  </div>
-                  <div>{formatDistanceToNow(new Date(dep.timestamp))} ago</div>
-                </div>
-                
-                {isExpanded && (
-                  <div className="mt-3 pt-3 border-t border-slate-800 space-y-2 text-xs">
-                    <div className="flex items-center gap-1.5 text-slate-400 font-mono bg-slate-900 p-1.5 rounded">
-                      <GitCommit className="w-3.5 h-3.5" />
-                      {dep.commitHash}
-                    </div>
-                    <div className="text-slate-300">{dep.changelog}</div>
-                    <div className="flex gap-4 text-slate-500 font-mono">
-                      <span>Files: {dep.filesChanged}</span>
-                      <span className="text-green-500/80">+{dep.linesAdded}</span>
-                      <span className="text-red-500/80">-{dep.linesRemoved}</span>
-                    </div>
-                  </div>
+                className={cn(
+                  'flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-white/[0.03]',
+                  isIncidentRoot && 'bg-amber-500/[0.04]',
                 )}
-              </div>
+              >
+                {isExpanded ? (
+                  <ChevronDown className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                ) : (
+                  <ChevronRight className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium text-foreground">{dep.service}</span>
+                    <span className="font-mono text-xs text-muted-foreground">{dep.version}</span>
+                    {isIncidentRoot && <Badge variant="warning">Incident correlation</Badge>}
+                    <Badge variant={STATUS_VARIANT[dep.status]} className="ml-auto">
+                      {dep.status}
+                    </Badge>
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {dep.deployer} · {formatDistanceToNow(new Date(dep.timestamp))} ago
+                  </div>
+                </div>
+              </button>
+              {isExpanded && (
+                <div className="space-y-2 border-t border-border px-4 py-3 pl-11 text-xs">
+                  <div className="flex items-center gap-1.5 font-mono text-muted-foreground">
+                    <GitCommit className="size-3.5" />
+                    {dep.commitHash}
+                  </div>
+                  <p className="text-[13px] text-foreground">{dep.changelog}</p>
+                  <div className="flex gap-4 font-mono text-muted-foreground">
+                    <span>Files: {dep.filesChanged}</span>
+                    <span className="text-emerald-400">+{dep.linesAdded}</span>
+                    <span className="text-red-400">-{dep.linesRemoved}</span>
+                  </div>
+                </div>
+              )}
             </div>
           );
-        })}
-        {totalCount > limit && (
-          <button
-            onClick={() => setLimit(l => l + 10)}
-            className="w-full py-2 text-sm text-slate-400 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-md transition-colors"
-          >
+        })
+      )}
+      {totalCount > limit && (
+        <div className="px-4 py-3">
+          <Button type="button" variant="outline" className="w-full" onClick={() => setLimit((l) => l + 10)}>
             Show more
-          </button>
-        )}
-      </div>
-    </div>
+          </Button>
+        </div>
+      )}
+    </Panel>
   );
-};
-
-export default DeploymentTimeline;
+}

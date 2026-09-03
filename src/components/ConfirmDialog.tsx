@@ -1,7 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
-import { setConfirmHandler } from '@/webmcp/register-tools';
-import type { ConfirmRequest } from '@/webmcp/register-tools';
-import { ShieldCheck } from 'lucide-react';
+import { useEffect, useRef, useState } from "react";
+import { ShieldCheck } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { setConfirmHandler } from "@/webmcp/register-tools";
+import type { ConfirmRequest } from "@/webmcp/register-tools";
 
 interface PendingRequest {
   req: ConfirmRequest;
@@ -22,122 +32,88 @@ export default function ConfirmDialog() {
         });
       },
       () => {
-        const pending = pendingRef.current;
-        if (!pending) return;
-        pending.resolve(false);
-        pendingRef.current = null;
-        setRequest(null);
-      },
+        settle(false);
+      }
     );
     return () => setConfirmHandler(null, null);
   }, []);
 
+  function settle(value: boolean) {
+    const pending = pendingRef.current;
+    if (!pending) return;
+    pendingRef.current = null;
+    pending.resolve(value);
+    setRequest(null);
+  }
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!request) return;
-      if (e.key === 'Enter') {
+      if (!pendingRef.current) return;
+      if (e.key === "Enter") {
         e.preventDefault();
-        pendingRef.current = null;
-        request.resolve(true);
-        setRequest(null);
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        pendingRef.current = null;
-        request.resolve(false);
-        setRequest(null);
+        settle(true);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [request]);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
-  if (!request) return null;
-
-  const { req } = request;
-
-  const handleApprove = () => {
-    pendingRef.current = null;
-    request.resolve(true);
-    setRequest(null);
-  };
-
-  const handleDecline = () => {
-    pendingRef.current = null;
-    request.resolve(false);
-    setRequest(null);
-  };
-
-  const getAccentColor = (variant: 'default' | 'warning' | 'destructive') => {
-    switch (variant) {
-      case 'warning': return 'text-amber-500 border-amber-500 bg-amber-500/10';
-      case 'destructive': return 'text-red-500 border-red-500 bg-red-500/10';
-      default: return 'text-blue-500 border-blue-500 bg-blue-500/10';
-    }
-  };
-
-  const getButtonColor = (variant: 'default' | 'warning' | 'destructive') => {
-    switch (variant) {
-      case 'destructive': return 'bg-red-500 hover:bg-red-600 text-white border-transparent';
-      case 'warning': return 'bg-green-500 hover:bg-green-600 text-white border-transparent';
-      default: return 'bg-green-500 hover:bg-green-600 text-white border-transparent';
-    }
-  };
+  const req = request?.req;
+  const isDestructive = req?.variant === "destructive";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="ackboard-confirm-title">
-      <div className="bg-slate-900 border border-slate-700 rounded-lg shadow-2xl max-w-md w-full p-6 flex flex-col gap-4 animate-zoom-in">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-full border ${getAccentColor(req.variant)}`}>
-            <ShieldCheck className="w-6 h-6" />
+    <Dialog
+      open={request !== null}
+      onOpenChange={(open) => {
+        if (!open) settle(false);
+      }}
+    >
+      <DialogContent aria-labelledby="ackboard-confirm-title">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div
+              className={`rounded-full border p-2 ${
+                isDestructive
+                  ? "border-red-500/40 bg-red-500/10 text-red-400"
+                  : req?.variant === "warning"
+                  ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
+                  : "border-blue-500/40 bg-blue-500/10 text-blue-400"
+              }`}
+            >
+              <ShieldCheck className="size-5" />
+            </div>
+            <DialogTitle id="ackboard-confirm-title">
+              {req?.title ?? "Confirm"}
+            </DialogTitle>
           </div>
-          <h2 id="ackboard-confirm-title" className="text-xl font-semibold text-slate-50">{req.title}</h2>
-        </div>
-        
-        <div className="text-slate-200 text-lg">
-          {req.message}
-        </div>
-        
-        {req.details && (
-          <div className="text-sm text-slate-400 bg-slate-950 p-3 rounded-md font-mono whitespace-pre-wrap border border-slate-800 max-h-48 overflow-y-auto">
+          <DialogDescription className="text-base text-foreground pt-1">
+            {req?.message}
+          </DialogDescription>
+        </DialogHeader>
+
+        {req?.details && (
+          <pre className="max-h-48 overflow-y-auto whitespace-pre-wrap rounded-md border border-border bg-background p-3 font-mono text-xs text-muted-foreground">
             {req.details}
-          </div>
+          </pre>
         )}
 
-        <div className="flex justify-end gap-3 mt-4">
-          <button
-            onClick={handleDecline}
-            className="px-4 py-2 rounded-md bg-slate-800 text-slate-200 hover:bg-slate-700 transition-colors border border-slate-700"
-          >
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={() => settle(false)}>
             Decline
-          </button>
-          <button
-            onClick={handleApprove}
-            className={`px-4 py-2 rounded-md transition-colors border ${getButtonColor(req.variant)}`}
+          </Button>
+          <Button
+            type="button"
+            variant={isDestructive ? "destructive" : "default"}
+            onClick={() => settle(true)}
           >
             Approve
-          </button>
-        </div>
-        
-        <div className="text-xs text-slate-500 text-center mt-2">
+          </Button>
+        </DialogFooter>
+
+        <p className="text-center text-xs text-muted-foreground">
           Enter to approve, Escape to decline
-        </div>
-      </div>
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes zoom-in {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.2s ease-out forwards;
-        }
-        .animate-zoom-in {
-          animation: zoom-in 0.2s ease-out forwards;
-        }
-      `}</style>
-    </div>
+        </p>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,99 +1,96 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Circle, CheckCircle, XCircle, Loader2, MinusCircle } from 'lucide-react';
+
+import Panel from '@/components/Panel';
+import { Button } from '@/components/ui/button';
+import { nativeControlClass } from '@/lib/field';
+import { cn } from '@/lib/utils';
 import { useRunbookStore } from '@/stores';
 
 interface RunbookPanelProps {
   onExecuteStep?: (runbookId: string, stepIndex: number) => void;
 }
 
-const RunbookPanel: React.FC<RunbookPanelProps> = ({ onExecuteStep }) => {
+export default function RunbookPanel({ onExecuteStep }: RunbookPanelProps) {
   const runbooks = useRunbookStore((state) => state.runbooks);
   const [pickedId, setPickedId] = useState<string | null>(null);
   const selectedRunbookId = pickedId ?? runbooks[0]?.id ?? '';
-
-  const runbook = runbooks.find(r => r.id === selectedRunbookId);
+  const runbook = runbooks.find((r) => r.id === selectedRunbookId);
 
   return (
-    <div className="flex flex-col h-full bg-slate-900 border border-slate-800 rounded-lg overflow-hidden">
-      <div className="p-4 border-b border-slate-800 flex items-center justify-between gap-4">
-        <h3 className="text-sm font-semibold text-slate-200 whitespace-nowrap">Runbook Executor</h3>
+    <Panel
+      title="Runbook"
+      actions={
         <select
           value={selectedRunbookId}
           onChange={(e) => setPickedId(e.target.value)}
-          className="w-full bg-slate-950 border border-slate-800 rounded-md py-1 px-2 text-sm text-slate-50 focus:outline-none focus:border-blue-500 truncate"
+          className={cn(nativeControlClass, 'max-w-[220px] truncate')}
         >
           {runbooks.map((rb) => (
             <option key={rb.id} value={rb.id}>{rb.name}</option>
           ))}
         </select>
-      </div>
-      
+      }
+      bodyClassName="overflow-y-auto"
+    >
       {runbook ? (
-        <div className="flex-1 overflow-y-auto p-4">
-          <div className="mb-4">
-            <h4 className="font-semibold text-slate-50 text-sm mb-1">{runbook.name}</h4>
-            <p className="text-xs text-slate-400">{runbook.description}</p>
-            <div className="mt-2 text-[10px] uppercase font-bold text-slate-500">
-              Target: <span className="text-blue-400">{runbook.forService}</span>
-            </div>
+        <>
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-[13px] text-muted-foreground">{runbook.description}</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Target <span className="text-foreground">{runbook.forService}</span>
+            </p>
           </div>
-          
-          <div className="space-y-3">
-            {runbook.steps.map((step, index) => {
-              const prevCompleted = index === 0 || runbook.steps[index - 1]?.status === 'completed';
-              const canExecute = step.status === 'pending' && prevCompleted;
-              
-              let Icon = Circle;
-              let iconColor = 'text-slate-600';
-              if (step.status === 'running') { Icon = Loader2; iconColor = 'text-blue-500 animate-spin'; }
-              else if (step.status === 'completed') { Icon = CheckCircle; iconColor = 'text-green-500'; }
-              else if (step.status === 'failed') { Icon = XCircle; iconColor = 'text-red-500'; }
-              else if (step.status === 'skipped') { Icon = MinusCircle; iconColor = 'text-slate-500'; }
+          {runbook.steps.map((step, index) => {
+            const prevCompleted = index === 0 || runbook.steps[index - 1]?.status === 'completed';
+            const canExecute = step.status === 'pending' && prevCompleted;
 
-              return (
-                <div key={index} className={`p-3 rounded-lg border ${step.status === 'running' ? 'bg-blue-950/20 border-blue-500/30' : 'bg-slate-950 border-slate-800'}`}>
-                  <div className="flex items-start gap-3">
-                    <Icon className={`w-5 h-5 mt-0.5 ${iconColor}`} />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-slate-200">Step {index + 1}</span>
-                        {step.status === 'pending' && (
-                          <button
-                            disabled={!canExecute}
-                            onClick={() => onExecuteStep?.(runbook.id, index)}
-                            className={`text-xs px-2.5 py-1 rounded transition-colors ${
-                              canExecute
-                                ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                                : 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                            }`}
-                          >
-                            Execute
-                          </button>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-400 mt-1">{step.description}</p>
-                      <div className="text-[10px] font-mono text-slate-500 mt-1.5 bg-slate-900 px-1.5 py-0.5 rounded inline-block">
-                        {step.action}: {step.target}
-                      </div>
-                      {step.result && (
-                        <div className="text-xs mt-2 p-2 rounded bg-slate-900 border border-slate-800 text-slate-300">
-                          {step.result}
-                        </div>
-                      )}
-                    </div>
+            let Icon = Circle;
+            let iconColor = 'text-muted-foreground/50';
+            if (step.status === 'running') { Icon = Loader2; iconColor = 'text-blue-500 animate-spin'; }
+            else if (step.status === 'completed') { Icon = CheckCircle; iconColor = 'text-emerald-500'; }
+            else if (step.status === 'failed') { Icon = XCircle; iconColor = 'text-red-500'; }
+            else if (step.status === 'skipped') { Icon = MinusCircle; iconColor = 'text-muted-foreground'; }
+
+            return (
+              <div
+                key={index}
+                className={cn(
+                  'flex items-start gap-3 border-b border-border px-4 py-3',
+                  step.status === 'running' && 'bg-blue-500/[0.04]',
+                )}
+              >
+                <Icon className={cn('mt-0.5 size-4 shrink-0', iconColor)} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-medium">Step {index + 1}</span>
+                    {step.status === 'pending' && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={canExecute ? 'default' : 'secondary'}
+                        disabled={!canExecute}
+                        onClick={() => onExecuteStep?.(runbook.id, index)}
+                      >
+                        Execute
+                      </Button>
+                    )}
                   </div>
+                  <p className="mt-1 text-[13px] text-muted-foreground">{step.description}</p>
+                  <p className="mt-1 font-mono text-xs text-muted-foreground">
+                    {step.action}: {step.target}
+                  </p>
+                  {step.result && (
+                    <p className="mt-2 text-[13px] text-foreground">{step.result}</p>
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        </div>
+              </div>
+            );
+          })}
+        </>
       ) : (
-        <div className="flex-1 flex items-center justify-center text-sm text-slate-500">
-          No runbook selected
-        </div>
+        <p className="px-4 py-12 text-center text-sm text-muted-foreground">No runbook selected</p>
       )}
-    </div>
+    </Panel>
   );
-};
-
-export default RunbookPanel;
+}
