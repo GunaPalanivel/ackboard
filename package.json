@@ -9,7 +9,12 @@
     "check": "tsx scripts/run-self-check.ts",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "vercel --prod --yes"
+    "deploy": "vercel --prod --yes",
+    "verify:reg": "tsx scripts/verify-registration.ts",
+    "verify:invoke": "tsx scripts/verify-invocation.ts",
+    "verify:mcp": "tsx scripts/verify-mcp-client.ts",
+    "verify:report": "tsx scripts/verify-report.ts",
+    "verify": "tsx scripts/verify-registration.ts && tsx scripts/verify-invocation.ts && tsx scripts/verify-mcp-client.ts && tsx scripts/verify-report.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -23,12 +28,17 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@mcp-b/global": "^5.1.0",
+    "@mcp-b/webmcp-local-relay": "^5.1.0",
     "@mcp-b/webmcp-types": "^5.1.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.0",
+    "esbuild": "^0.28.2",
     "oxlint": "^1.79.0",
+    "playwright": "^1.62.1",
     "tsx": "^4.23.13",
     "typescript": "~6.0.2",
     "vercel": "^59.11.0",

@@ -14,7 +14,7 @@ npm run check
 npm run dev
 ```
 
-`npm run check` runs the store logic behind every read tool. It does not replace a Chrome Inspector pass.
+`npm run check` runs the store logic behind every read tool. `npm run verify` proves native Chrome 152 registration on the live URL and the full tool chain including the write modal. It does not replace a ChatGPT Atlas pass.
 
 ## Tool shape
 
@@ -53,7 +53,7 @@ WebKit has opposed (WebKit/standards-positions#670). Mozilla has filed no formal
 
 ## Limits
 
-The fleet is simulated. This repo was verified with `npm run check` and a no-WebMCP browser fallback. ChatGPT Atlas still needs a human pass on the live URL. `requestUserInteraction()` is still an open discussion, so writes use an in-page modal.
+The fleet is simulated. Native registration was verified in Chrome 152 with the WebMCP flag against https://ackboard.vercel.app (`document.modelContext`, 11 tools, console banner). Invocation of the triage chain, including Decline-as-cancel and Approve-to-write, was verified through the model-context surface. ChatGPT Atlas was not used in that pass. `requestUserInteraction()` is still an open discussion, so writes use an in-page modal.
 
 ## License
 
